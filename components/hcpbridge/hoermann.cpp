@@ -46,16 +46,6 @@ void HoermannGarageEngine::setup(int8_t rx, int8_t tx, int8_t rts)
   }
   mb.slave(SLAVE_ID);
 
-  xTaskCreatePinnedToCore(
-      modbusServeTask, /* Function to implement the task */
-      "ModBusTask",    /* Name of the task */
-      10000,           /* Stack size in words */
-      NULL,            /* Task input parameter */
-      // 1,  /* Priority of the task */
-      configMAX_PRIORITIES - 1,
-      &modBusTask, /* Task handle. */
-      1);          /* Core where the task should run */
-
   // Required for Write
   mb.addHreg(0x9C41, 0, 0x03); // Commands
   mb.addHreg(0x9D31, 0, 0x09); // Broadcast
@@ -84,6 +74,18 @@ void HoermannGarageEngine::setup(int8_t rx, int8_t tx, int8_t rts)
       HREG(0x9D31 + 6), [this](TRegister *reg, uint16_t val) -> uint16_t
       { return this->onRegSevenChanged(reg, val); }, // Relay and Light state
       0x01);
+
+  // Start serving only after all registers and callbacks are in place, so a poll
+  // that arrives right after a restart is never answered from a half-set-up slave
+  xTaskCreatePinnedToCore(
+      modbusServeTask, /* Function to implement the task */
+      "ModBusTask",    /* Name of the task */
+      10000,           /* Stack size in words */
+      NULL,            /* Task input parameter */
+      // 1,  /* Priority of the task */
+      configMAX_PRIORITIES - 1,
+      &modBusTask, /* Task handle. */
+      1);          /* Core where the task should run */
 }
 
 void HoermannGarageEngine::handleModbus()
@@ -131,8 +133,6 @@ Modbus::ResultCode HoermannGarageEngine::onRequest(Modbus::FunctionCode fc, cons
   }
   else
   {
-    this->state->debugMessage = "unknown function code fc=" + fc;
-    this->state->debMessage = true;
     ESP_LOGW(TAG_HCI, "unknown function code fc=%x", fc);
   }
   this->state->setValid(true);
@@ -381,11 +381,6 @@ void HoermannState::recordModbusResponse()
 void HoermannState::clearChanged()
 {
   this->changed = false;
-}
-void HoermannState::clearDebug()
-{
-  this->debMessage = false;
-  this->debugMessage = "Initial";
 }
 long HoermannState::responseAge()
 {

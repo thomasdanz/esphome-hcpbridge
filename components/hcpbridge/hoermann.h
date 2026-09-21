@@ -2,7 +2,6 @@
 
 #ifndef HOERMANN_H_
 #define HOERMANN_H_
-#define MODBUSRTU_DEBUG 1
 
 #include <Arduino.h>
 #include <Stream.h>
@@ -78,10 +77,8 @@ public:
     bool lightOn = false;
     bool relayOn = false;
     State state = CLOSED;
-    String debugMessage = "initial";
     unsigned long lastModbusRespone = 0;
     bool changed = false;
-    bool debMessage = false;
     float gotoPosition = 0.0f;
     bool valid = false;
 
@@ -92,7 +89,6 @@ public:
     void setRelayOn(bool relayOn);
     void recordModbusResponse();
     void clearChanged();
-    void clearDebug();
     long responseAge();
     void setState(State state);
     void setValid(bool isValid);
