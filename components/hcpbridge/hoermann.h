@@ -10,7 +10,9 @@
 
 #define SLAVE_ID 2
 #define SIMULATEKEYPRESSDELAYMS 100
-#define DEADREPORTTIMEOUT 60000
+// Measured idle poll gap is ~67ms (max observed 124ms over 10+ hours incl. door
+// travel), so 10s is a wide margin before considering the bus dead at runtime.
+#define DEADREPORTTIMEOUT 10000
 
 #define RS485 Serial2
 #ifdef CONFIG_IDF_TARGET_ESP32S3
@@ -77,10 +79,12 @@ public:
     bool lightOn = false;
     bool relayOn = false;
     State state = CLOSED;
-    unsigned long lastModbusRespone = 0;
+    // Written by the Modbus task, read from the main loop; volatile so the
+    // compiler always reloads them instead of caching a value across calls
+    volatile unsigned long lastModbusRespone = 0;
     bool changed = false;
     float gotoPosition = 0.0f;
-    bool valid = false;
+    volatile bool valid = false;
 
     void setTargetPosition(float targetPosition);
     void setGotoPosition(float setPosition);
