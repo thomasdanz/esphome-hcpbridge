@@ -2,7 +2,6 @@
 
 [![GitHub](https://img.shields.io/github/license/thomasdanz/esphome-hcpbridge)](https://github.com/thomasdanz/esphome-hcpbridge/blob/main/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/thomasdanz/esphome-hcpbridge)](https://github.com/thomasdanz/esphome-hcpbridge)
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/mapero)](https://github.com/sponsors/mapero)
 
 
 This is a esphome-based adaption of the HCPBridge. thanks to [mapero](https://github.com/14yannick/esphome-hcpbridge) for the initial esphome port. Credits for the initial development of the HCPBridge go to [Gifford47](https://github.com/Gifford47/HCPBridgeMqtt), [hkiam](https://github.com/hkiam/HCPBridge) and all the other guys contributed.
