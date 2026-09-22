@@ -15,11 +15,6 @@ const HoermannCommand HoermannCommand::WAITING = HoermannCommand(0x0000, 0x0000,
 TaskHandle_t modBusTask;
 void modbusServeTask(void *parameter);
 
-void DelayHandler(void)
-{
-  HoermannGarageEngine::getInstance().handleModbus();
-}
-
 void modbusServeTask(void *parameter)
 {
   while (true)
@@ -390,19 +385,6 @@ void HoermannState::recordModbusResponse()
 void HoermannState::clearChanged()
 {
   this->changed = false;
-}
-long HoermannState::responseAge()
-{
-  if (this->lastModbusRespone == 0)
-  {
-    return -1;
-  }
-  long diff = millis() - lastModbusRespone;
-  if (diff < 0)
-  {
-    return -2;
-  }
-  return diff / 1000;
 }
 void HoermannState::setState(State state)
 {

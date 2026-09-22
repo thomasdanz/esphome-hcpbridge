@@ -93,7 +93,6 @@ public:
     void setRelayOn(bool relayOn);
     void recordModbusResponse();
     void clearChanged();
-    long responseAge();
     void setState(State state);
     void setValid(bool isValid);
 
