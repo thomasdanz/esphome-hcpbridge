@@ -10,6 +10,21 @@
 namespace esphome {
 namespace hcpbridge {
 
+// Shared by entities that only show a real value once the HCP bus connection is
+// up: sets/clears the entity's warning flag to match `valid` and returns it, so
+// callers can `if (!check_valid_or_warn(this, ...)) return;` instead of each
+// repeating the same set/clear-warning boilerplate.
+inline bool check_valid_or_warn(Component *component, bool valid) {
+  if (!valid) {
+    if (!component->status_has_warning())
+      component->status_set_warning();
+    return false;
+  }
+  if (component->status_has_warning())
+    component->status_clear_warning();
+  return true;
+}
+
 class HCPBridge : public PollingComponent {
  public:
   void setup() override;

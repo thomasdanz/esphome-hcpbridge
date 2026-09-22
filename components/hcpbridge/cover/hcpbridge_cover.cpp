@@ -58,20 +58,8 @@ void HCPBridgeCover::setup() {
 }
 
 void HCPBridgeCover::on_event_triggered() {
-  if (!this->parent_->engine->state->valid) {
-    if (!this->status_has_warning()) {
-      ESP_LOGD(TAG,
-               "HCPBridgeCover::on_event_triggered() - state is invalid, "
-               "setting warning");
-      this->status_set_warning();
-    }
+  if (!check_valid_or_warn(this, this->parent_->engine->state->valid))
     return;
-  }
-
-  if (this->status_has_warning()) {
-    ESP_LOGD(TAG, "HCPBridgeCover::on_event_triggered() - clearing warning");
-    this->status_clear_warning();
-  }
 
   HoermannState *state = this->parent_->engine->state;
   float currentPosition = state->currentPosition;

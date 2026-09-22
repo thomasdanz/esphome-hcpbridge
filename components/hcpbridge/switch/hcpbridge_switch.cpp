@@ -17,17 +17,8 @@ void HCPBridgeSwitchVent::on_event_triggered() {
     ESP_LOGW(TAG, "HCPBridgeSwitchVent::update() - Engine or parent is null");
     return;
   }
-  if (!this->parent_->engine->state->valid) {
-    if (!this->status_has_warning()) {
-      ESP_LOGD(TAG, "HCPBridgeSwitchVent::update() - state is invalid");
-      this->status_set_warning();
-    }
+  if (!check_valid_or_warn(this, this->parent_->engine->state->valid))
     return;
-  }
-  if (this->status_has_warning()) {
-    ESP_LOGD(TAG, "HCPBridgeSwitchVent::update() - clearing warning");
-    this->status_clear_warning();
-  }
   bool is_venting = this->parent_->engine->state->state == HoermannState::State::VENT;
 
   if (this->previousState_ != is_venting) {
@@ -66,17 +57,8 @@ void HCPBridgeSwitchHalf::on_event_triggered() {
     ESP_LOGW(TAG, "HCPBridgeSwitchHalf::update() - Engine or parent is null");
     return;
   }
-  if (!this->parent_->engine->state->valid) {
-    if (!this->status_has_warning()) {
-      ESP_LOGD(TAG, "HCPBridgeSwitchHalf::update() - state is invalid");
-      this->status_set_warning();
-    }
+  if (!check_valid_or_warn(this, this->parent_->engine->state->valid))
     return;
-  }
-  if (this->status_has_warning()) {
-    ESP_LOGD(TAG, "HCPBridgeSwitchHalf::update() - clearing warning");
-    this->status_clear_warning();
-  }
   bool is_half_open = this->parent_->engine->state->state == HoermannState::State::HALFOPEN;
 
   if (this->previousState_ != is_half_open) {
