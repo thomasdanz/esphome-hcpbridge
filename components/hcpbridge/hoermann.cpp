@@ -262,7 +262,7 @@ uint16_t HoermannGarageEngine::onRegSevenChanged(TRegister *reg, uint16_t val)
   // On second byte changed
   if ((reg->value & 0x00FF) != (val & 0x00FF))
   {
-    ESP_LOGD(TAG_HCI, "onRegSixChanged. address=%x, value=%x", reg->address.address, val);
+    ESP_LOGD(TAG_HCI, "onRegSevenChanged. address=%x, value=%x", reg->address.address, val);
     this->state->setLigthOn((val & 0x00FF) == 0x14 || (val & 0x00FF) == 0x10);
     this->state->setRelayOn((val & 0xFF00) >> 8 == 0x02 || (val & 0x00FF) == 0x14 || (val & 0x00FF) == 0x04); 
   }

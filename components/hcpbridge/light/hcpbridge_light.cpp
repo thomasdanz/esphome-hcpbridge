@@ -13,7 +13,7 @@ light::LightTraits HCPBridgeLight::get_traits() {
 }
 
 void HCPBridgeLight::setup() {
-    ESP_LOGD(TAG, "HCPBridgeLight::setup() - setup method calleds");
+    ESP_LOGD(TAG, "HCPBridgeLight::setup() - setup method called");
     this->parent_->add_on_state_callback([this]() { this->on_event_triggered(); }, TAG);
 }
 
@@ -30,7 +30,7 @@ void HCPBridgeLight::on_event_triggered() {
   if (this->parent_->engine->state->valid &&
       this->state_->current_values.is_on() != this->parent_->engine->state->lightOn) {
     // Adjust the state of the light based on the external lightOn state
-    ESP_LOGD(TAG, "HCPBridgeBinaryLight::update() - adjusting state");
+    ESP_LOGD(TAG, "HCPBridgeLight::on_event_triggered() - adjusting state");
     if (this->parent_->engine->state->lightOn) {
       this->state_->turn_on().perform();
     } else {
@@ -40,7 +40,7 @@ void HCPBridgeLight::on_event_triggered() {
 }
 
 void HCPBridgeLight::dump_config(){
-  ESP_LOGCONFIG(TAG, "HCPBridgeBinaryLight");
+  ESP_LOGCONFIG(TAG, "HCPBridgeLight");
 }
 
 } //namespace hcpbridge
