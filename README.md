@@ -176,7 +176,7 @@ api:
 
 ### Example YAML
 
-Check out the [example_hcpbridge.yaml](./example_hcpbridge.yaml) for a complete yaml with all hcpbridge components.
+Check out the [hcpbridge.yaml.example](./hcpbridge.yaml.example) for a complete yaml with all hcpbridge components.
 
 # Known issues
 
@@ -188,7 +188,7 @@ connection. On some operators (confirmed on a Hörmann Promatic 4 / SupraMatic
 with a power cycle of the operator itself - reconnecting the ESP alone does
 not fix it.
 
-`example_hcpbridge.yaml` includes an optional automation for this: if the
+`hcpbridge.yaml.example` includes an optional automation for this: if the
 operator does not resume polling within 10s of an ESP boot, it turns off a
 Home Assistant switch that powers the operator (and, if the ESP is powered
 from the same bus, the ESP itself), relying on that switch's own auto-on
@@ -209,7 +209,7 @@ state. Two configurations make that bit unreliable:
   entity shows a movement indicator mislabeled as a light, and manual
   toggling has no real effect. If you don't use the drive light, don't add
   the `light`/`output` entities at all - see the commented-out block in
-  `example_hcpbridge.yaml`.
+  `hcpbridge.yaml.example`.
 - **Afterglow duration (Nachleuchtdauer, Menü 26) set to 0**: identical bytes
   go out on the bus whether the light is genuinely still on (afterglow
   running) or has just turned off, so the entity can lag several seconds
