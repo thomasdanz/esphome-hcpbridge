@@ -3,6 +3,14 @@
 #ifndef HOERMANN_H_
 #define HOERMANN_H_
 
+// Must come before Arduino.h/ModbusRTU.h: those pull in ESP-IDF's native <esp_log.h>,
+// which defines its own ESP_LOGx macros. esphome/core/log.h #undefs and redefines them
+// to route through ESPHome's own Logger - without it (as this file lacked for a long
+// time), every ESP_LOGx call in this file silently went straight to esp_log_write()
+// instead, bypassing ESPHome's logger entirely (never reaching the API/web_server log
+// view, regardless of logger: level/baud_rate/task_log_buffer_size).
+#include "esphome/core/log.h"
+
 #include <Arduino.h>
 #include <Stream.h>
 
