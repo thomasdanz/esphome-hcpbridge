@@ -200,16 +200,28 @@ comments above the `globals`/`script` section in the example for the exact
 requirements (a smart plug with its own auto-on timer, and the "Allow the
 device to perform Home Assistant actions" permission in Home Assistant).
 
+# Design notes
+
+### Why not ESPHome's native `modbus:` component
+
+ESPHome's `modbus:` component gained slave/server mode support at some point,
+but this project still implements its own Modbus RTU slave with the
+`modbus-esp8266` library instead. The reason is timing: Hörmann's controller
+expects a response within ~12ms, so this runs in its own dedicated,
+highest-priority FreeRTOS task rather than a `Component::loop()` tick shared
+with WiFi/API/etc. ESPHome's native Modbus server has no such task, and we
+haven't verified the shared main loop is fast enough for this deadline.
+Running it from our own task instead isn't a clean option either, since its
+internal buffers were never designed for concurrent access from a second
+task. See the comment on the `mb` member in
+[hoermann.h](components/hcpbridge/hoermann.h) for more detail.
+
 # Project
 
 - HCPBridge from `Tysonpower` on an `Hörmann Promatic 4`
 
 You can find more information on the project here: [Hörmann garage door via MQTT](https://community.home-assistant.io/t/hormann-garage-door-via-mqtt/279938/340)
 Known working hardware are the ESP32 and S3 dual core chip.
-
-# ToDo
-
-- [ ] Use ESPHome modbus component instead of own code
 
 # Contribute
 

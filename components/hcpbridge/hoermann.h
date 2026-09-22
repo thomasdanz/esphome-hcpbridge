@@ -138,6 +138,16 @@ public:
 
 private:
     HoermannGarageEngine(){};
+    // Own hand-rolled Modbus RTU slave via this library, not ESPHome's native `modbus:`
+    // component (which does support server/slave mode). Two reasons we stayed with this:
+    // (1) Hörmann's controller expects a response within ~12ms, which is why this runs
+    // in its own dedicated, highest-priority FreeRTOS task (see modbusServeTask in the
+    // .cpp) instead of a Component::loop() tick shared with WiFi/API/etc - ESPHome's
+    // native Modbus server has no such task, and we haven't verified the shared main
+    // loop is fast enough for this deadline.
+    // (2) Driving ESPHome's own Modbus hub from our own task instead would mean calling
+    // into a class that was never designed or tested for concurrent access from a
+    // second task - its internal buffers assume a single, cooperative caller.
     ModbusRTU mb;                                 // ModbusRTU instance, the man behind the curtain
     const HoermannCommand *nextCommand = nullptr; // Next Command to transmit
     unsigned long commandWrittenOn = 0;           // When was last command written (wait 100ms before end of command is transmitted)
