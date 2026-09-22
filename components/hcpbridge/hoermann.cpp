@@ -157,7 +157,7 @@ void HoermannGarageEngine::setCommandValuesToRead()
       // Send it
       regPlug2Value = nextCommand->commandRegPlus2Value;
       regPlug3Value = nextCommand->commandRegPlus3Value;
-      ESP_LOGI(TAG_HCI, "command start %x %x", regPlug2Value, regPlug3Value);
+      ESP_LOGD(TAG_HCI, "command start %x %x", regPlug2Value, regPlug3Value);
       commandWrittenOn = millis();
       // It was written and it can be cleared
     }
@@ -165,7 +165,7 @@ void HoermannGarageEngine::setCommandValuesToRead()
     {
       regPlug2Value = nextCommand->commandEndPlus2Value;
       regPlug3Value = nextCommand->commandEndPlus3Value;
-      ESP_LOGI(TAG_HCI, "command dispose %x %x", regPlug2Value, regPlug3Value);
+      ESP_LOGD(TAG_HCI, "command dispose %x %x", regPlug2Value, regPlug3Value);
       // Reset Variables
       commandWrittenOn = 0;
       nextCommand = nullptr;
@@ -202,7 +202,7 @@ uint16_t HoermannGarageEngine::onCurrentStateChanged(TRegister *reg, uint16_t va
   // on First Byte changed
   if ((reg->value & 0xFF00) != (val & 0xFF00))
   {
-    ESP_LOGI(TAG_HCI, "onCurrentStateChanged. address=%x, value=%x (actual: %x)", reg->address.address, val, (val & 0xFF00) >> 8);
+    ESP_LOGD(TAG_HCI, "onCurrentStateChanged. address=%x, value=%x (actual: %x)", reg->address.address, val, (val & 0xFF00) >> 8);
 
     switch ((val & 0xFF00) >> 8)
     {
@@ -262,7 +262,7 @@ uint16_t HoermannGarageEngine::onRegSevenChanged(TRegister *reg, uint16_t val)
   // On second byte changed
   if ((reg->value & 0x00FF) != (val & 0x00FF))
   {
-    ESP_LOGI(TAG_HCI, "onRegSixChanged. address=%x, value=%x", reg->address.address, val);
+    ESP_LOGD(TAG_HCI, "onRegSixChanged. address=%x, value=%x", reg->address.address, val);
     this->state->setLigthOn((val & 0x00FF) == 0x14 || (val & 0x00FF) == 0x10);
     this->state->setRelayOn((val & 0xFF00) >> 8 == 0x02 || (val & 0x00FF) == 0x14 || (val & 0x00FF) == 0x04); 
   }
