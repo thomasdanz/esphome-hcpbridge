@@ -91,6 +91,15 @@ void HoermannGarageEngine::setup(int8_t rx, int8_t tx, int8_t rts)
 void HoermannGarageEngine::handleModbus()
 {
   mb.task();
+
+  // Runs in the same task as onRequest()'s state->setValid(true), so `valid` only
+  // ever has one writer - checking this from the main loop instead raced with it.
+  if (this->state->valid && millis() - this->state->lastModbusRespone > DEADREPORTTIMEOUT)
+  {
+    ESP_LOGW(TAG_HCI, "No Modbus request for over %u ms, marking connection as lost",
+             static_cast<unsigned>(DEADREPORTTIMEOUT));
+    this->state->setValid(false);
+  }
 }
 
 Modbus::ResultCode HoermannGarageEngine::onRequest(Modbus::FunctionCode fc, const Modbus::RequestData data)
@@ -402,5 +411,12 @@ void HoermannState::setState(State state)
 }
 void HoermannState::setValid(bool isValid)
 {
+  // Unlike the other setters, this one is called on every single request (every
+  // ~67ms when polling normally), so only flag a change on an actual transition -
+  // otherwise `changed` would almost never go false again.
+  if (this->valid != isValid)
+  {
+    this->changed = true;
+  }
   this->valid = isValid;
 }
