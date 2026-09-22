@@ -116,7 +116,6 @@ switch:
     vent_switch:
       id: switch_vent
       name: "${sw_vent}"
-      icon: mdi:fan
       restore_mode: disabled
     half_switch:
       id: half_switch

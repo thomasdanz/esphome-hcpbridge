@@ -16,7 +16,7 @@ CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID(CONF_HCPBridge_ID): cv.use_id(HCPBridge),
         cv.Optional(CONF_SWITCH_VENT): switch.switch_schema(
-            HCPBridgeSwitchVent, icon="mdi:hvac"
+            HCPBridgeSwitchVent, icon="mdi:fan"
         ),
         cv.Optional(CONF_SWITCH_HALF): switch.switch_schema(
             HCPBridgeSwitchHalf, icon="mdi:fraction-one-half"

@@ -1,5 +1,4 @@
 from esphome.components import button
-from esphome.const import ICON_FAN
 import esphome.config_validation as cv
 import esphome.codegen as cg
 from .. import hcpbridge_ns, CONF_HCPBridge_ID, HCPBridge
@@ -19,7 +18,7 @@ CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID(CONF_HCPBridge_ID): cv.use_id(HCPBridge),
         cv.Optional(CONF_BUTTON_VENT): button.button_schema(
-            HCPBridgeButtonVent, icon=ICON_FAN
+            HCPBridgeButtonVent, icon="mdi:fan"
         ),
         cv.Optional(CONF_BUTTON_HALF): button.button_schema(
             HCPBridgeButtonHalf, icon="mdi:fraction-one-half"
