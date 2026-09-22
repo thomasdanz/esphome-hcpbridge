@@ -200,6 +200,26 @@ comments above the `globals`/`script` section in the example for the exact
 requirements (a smart plug with its own auto-on timer, and the "Allow the
 device to perform Home Assistant actions" permission in Home Assistant).
 
+### The `light` entity doesn't reliably track the drive light
+
+The `light`/`output` entities read the drive light's on/off state from a bit
+in the same status register the operator uses to report relay/movement
+state. Two configurations make that bit unreliable:
+
+- **Drive light disabled at the operator (Menü 25 off)**: the bit still
+  toggles with door movement even though no physical light exists, so the
+  entity shows a movement indicator mislabeled as a light, and manual
+  toggling has no real effect. If you don't use the drive light, don't add
+  the `light`/`output` entities at all - see the commented-out block in
+  `example_hcpbridge.yaml`.
+- **Afterglow duration (Nachleuchtdauer, Menü 26) set to 0**: identical bytes
+  go out on the bus whether the light is genuinely still on (afterglow
+  running) or has just turned off, so the entity can lag several seconds
+  behind the real light after a door movement. A manual toggle in that
+  window can flip the light the wrong way, since the operator's toggle
+  command is a blind flip, not an explicit on/off. A non-zero afterglow
+  (even 1s) avoids this.
+
 # Design notes
 
 ### Why not ESPHome's native `modbus:` component

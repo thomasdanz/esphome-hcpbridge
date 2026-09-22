@@ -134,24 +134,24 @@ api:
   # power-cycle automation near the end of this file), so avoid restarting for
   # reasons that would otherwise resolve themselves, like a brief API hiccup.
   reboot_timeout: 0s
-  services:
-    - service: go_to_open
+  actions:
+    - action: go_to_open
       then:
         - lambda: |-
             id(garagedoor_cover).on_go_to_open();
-    - service: go_to_close
+    - action: go_to_close
       then:
         - lambda: |-
             id(garagedoor_cover).on_go_to_close();
-    - service: go_to_half
+    - action: go_to_half
       then:
         - lambda: |-
             id(garagedoor_cover).on_go_to_half();
-    - service: go_to_vent
+    - action: go_to_vent
       then:
         - lambda: |-
             id(garagedoor_cover).on_go_to_vent();
-    - service: toggle
+    - action: toggle
       then:
         - cover.toggle: garagedoor_cover
 
@@ -269,6 +269,6 @@ script:
       - delay: 10min
       - lambda: |-
           if (id(cycle_attempts) != 0) {
-            ESP_LOGI("hcpbridge", "Connection stable for 10 min, resetting power cycle attempt counter");
+            ESP_LOGI("hcpbridge", "Connection stable for 10 min; resetting power cycle attempt counter");
             id(cycle_attempts) = 0;
           }
