@@ -89,7 +89,7 @@ void HoermannGarageEngine::handleModbus()
 
   // Runs in the same task as onRequest()'s state->setValid(true), so `valid` only
   // ever has one writer - checking this from the main loop instead raced with it.
-  if (this->state->valid && millis() - this->state->lastModbusRespone > DEADREPORTTIMEOUT)
+  if (this->state->valid && millis() - this->state->lastModbusResponse > DEADREPORTTIMEOUT)
   {
     ESP_LOGW(TAG_HCI, "No Modbus request for over %u ms, marking connection as lost",
              static_cast<unsigned>(DEADREPORTTIMEOUT));
@@ -380,7 +380,7 @@ void HoermannState::setRelayOn(bool relayOn)
 }
 void HoermannState::recordModbusResponse()
 {
-  this->lastModbusRespone = millis();
+  this->lastModbusResponse = millis();
 }
 void HoermannState::clearChanged()
 {

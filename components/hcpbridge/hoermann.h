@@ -81,7 +81,7 @@ public:
     State state = CLOSED;
     // Written by the Modbus task, read from the main loop; volatile so the
     // compiler always reloads them instead of caching a value across calls
-    volatile unsigned long lastModbusRespone = 0;
+    volatile unsigned long lastModbusResponse = 0;
     bool changed = false;
     float gotoPosition = 0.0f;
     volatile bool valid = false;
