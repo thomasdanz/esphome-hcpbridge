@@ -82,9 +82,9 @@ public:
     // Written by the Modbus task, read from the main loop; volatile so the
     // compiler always reloads them instead of caching a value across calls
     volatile unsigned long lastModbusResponse = 0;
-    bool changed = false;
-    float gotoPosition = 0.0f;
+    volatile bool changed = false;
     volatile bool valid = false;
+    float gotoPosition = 0.0f;
 
     void setTargetPosition(float targetPosition);
     void setGotoPosition(float setPosition);
