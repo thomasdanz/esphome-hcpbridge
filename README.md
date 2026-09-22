@@ -1,9 +1,9 @@
 # esphome-hcpbridge
 
-[![GitHub](https://img.shields.io/github/license/14yannick/esphome-hcpbridge)](https://github.com/14yannick/esphome-hcpbridge/blob/main/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/14yannick/esphome-hcpbridge)](https://github.com/14yannick/esphome-hcpbridge)
+[![GitHub](https://img.shields.io/github/license/thomasdanz/esphome-hcpbridge)](https://github.com/thomasdanz/esphome-hcpbridge/blob/main/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/thomasdanz/esphome-hcpbridge)](https://github.com/thomasdanz/esphome-hcpbridge)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/mapero)](https://github.com/sponsors/mapero)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/14yannick/esphome-hcpbridge/build.yaml)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/thomasdanz/esphome-hcpbridge/build.yaml)
 
 
 This is a esphome-based adaption of the HCPBridge. thanks to [mapero](https://github.com/14yannick/esphome-hcpbridge) for the initial esphome port. Credits for the initial development of the HCPBridge go to [Gifford47](https://github.com/Gifford47/HCPBridgeMqtt), [hkiam](https://github.com/hkiam/HCPBridge) and all the other guys contributed.
@@ -20,13 +20,14 @@ esphome:
   name: "${name}"
   friendly_name: "${friendly_name}"
   libraries:
-    - emelianov/modbus-esp8266 # Required for communication with the modbus
-  platformio_options:
-    board_build.f_cpu: 240000000L
+    # The registry name alone no longer resolves on current ESPHome; it needs a
+    # name=URL form. This fork also fixes a dead bounds check in the upstream
+    # library (see https://github.com/thomasdanz/modbus-esp8266).
+    - modbus-esp8266=https://github.com/thomasdanz/modbus-esp8266
 
 external_components:
-    source: github://14yannick/esphome-hcpbridge
-    refresh: 0s # Ensure you always get the latest version
+  - source: github://thomasdanz/esphome-hcpbridge
+    refresh: always # Ensure you always get the latest version
 
 esp32:
   board: #adafruit_feather_esp32s3 #set your board
@@ -103,7 +104,7 @@ This component provide you the position of the door in %. Where 100% is fully op
 sensor:
   - platform: hcpbridge
     id: sensor_position
-    name: ${sen_pos}
+    name: "Garage Door Position"
 ```
 ### Button
 
@@ -153,24 +154,24 @@ There are in the YAML and not directly in the Cover to remove the API dependency
 api:
   encryption:
     key: !secret api_key
-  services:
-    - service: go_to_open
+  actions:
+    - action: go_to_open
       then:
         - lambda: |-
             id(garagedoor_cover).on_go_to_open();
-    - service: go_to_close
+    - action: go_to_close
       then:
         - lambda: |-
             id(garagedoor_cover).on_go_to_close();
-    - service: go_to_half
+    - action: go_to_half
       then:
         - lambda: |-
             id(garagedoor_cover).on_go_to_half();
-    - service: go_to_vent
+    - action: go_to_vent
       then:
         - lambda: |-
             id(garagedoor_cover).on_go_to_vent();
-    - service: toggle
+    - action: toggle
       then:
         - cover.toggle: garagedoor_cover
 ```
@@ -178,6 +179,26 @@ api:
 ### Example YAML
 
 Check out the [example_hcpbridge.yaml](./example_hcpbridge.yaml) for a complete yaml with all hcpbridge components.
+
+# Known issues
+
+### Door goes into an error state after an OTA update or ESP restart
+
+Restarting the ESP (including OTA updates) briefly interrupts the HCP bus
+connection. On some operators (confirmed on a Hörmann Promatic 4 / SupraMatic
+4) this is enough to put the operator into an error state that only clears
+with a power cycle of the operator itself - reconnecting the ESP alone does
+not fix it.
+
+`example_hcpbridge.yaml` includes an optional automation for this: if the
+operator does not resume polling within 10s of an ESP boot, it turns off a
+Home Assistant switch that powers the operator (and, if the ESP is powered
+from the same bus, the ESP itself), relying on that switch's own auto-on
+timer to bring both back. It retries up to 3 times and gives up after that,
+to avoid endlessly power-cycling a genuinely broken operator. See the
+comments above the `globals`/`script` section in the example for the exact
+requirements (a smart plug with its own auto-on timer, and the "Allow the
+device to perform Home Assistant actions" permission in Home Assistant).
 
 # Project
 
@@ -188,11 +209,7 @@ Known working hardware are the ESP32 and S3 dual core chip.
 
 # ToDo
 
-- [x] Initial working version
-- [ ] Use esphome modbus component instead of own code
-- [x] Map additional functions to esphome
-- [x] Use callbacks instead of pollingComponent (Only hcpbridge is polling)
-- [x] Expert options for the HCPBridge component (GPIOs ...)
+- [ ] Use ESPHome modbus component instead of own code
 
 # Contribute
 

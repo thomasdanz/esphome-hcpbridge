@@ -23,8 +23,6 @@ esphome:
     # This fork also fixes a dead bounds check that could overflow a response buffer.
 #    - emelianov/modbus-esp8266
      - modbus-esp8266=https://github.com/thomasdanz/modbus-esp8266
-  platformio_options:
-    board_build.f_cpu: 240000000L
   on_boot:
     then:
       - script.execute: watch_connection
